@@ -62,16 +62,12 @@
 				return (this.getSize() / 40) * this.getPixelRatio();
 			},
 			getWidth: function() {
-				var e = document.documentElement,
-					width = window.innerWidth || e.clientWidth || body.clientWidth;
-
-				return width;
+				var e = document.documentElement;
+                return window.innerWidth || e.clientWidth || body.clientWidth;
 			},
 			getHeight: function() {
-				var e = document.documentElement,
-					height = window.innerHeight|| e.clientHeight|| body.clientHeight;
-
-				return height;
+				var e = document.documentElement;
+                return window.innerHeight || e.clientHeight || body.clientHeight;
 			},
 			getCellWidth: function(canvas, grid) {
 				return (canvas.width - (Metrics.getBorder() * (grid.width + 1))) / grid.width;
@@ -310,6 +306,8 @@
 						case "RIGHT":
 							SLIDE_RATE += (Math.abs(slidingData.startX - slidingData.endX) * SLIDE_RATE);
 							break;
+                        default:
+                            break;
 					}
 
 					tile.sliding.value += SLIDE_RATE;
@@ -625,6 +623,8 @@
 						case "RIGHT":
 							action = this.moveRight;
 							break;
+                        default:
+                            break;
 					}
 
 					return action(grid);
@@ -642,6 +642,8 @@
 						return this.canMoveLeft(grid);
 					case "RIGHT":
 						return this.canMoveRight(grid);
+                    default:
+                        break;
 				}
 
 				return false;
