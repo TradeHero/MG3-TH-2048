@@ -434,9 +434,8 @@ var GameAssets = (function () {
                 context.textBaseline = "middle";
                 context.fillStyle = assets.gameOver.textColor;
                 context.fillText("Game Over!", (canvas.width / 2), (canvas.height / 2), canvas.width);
-
                 // Draw "Try again" button
-                this.showRestart(canvas, context);
+                //this.showRestart(canvas, context);
             },
             showGameWon: function (canvas, context) {
                 this.showOverlay(canvas, context, assets.gameWon.backgroundColor);
@@ -1237,6 +1236,7 @@ var GameAssets = (function () {
 
         // List of callbacks to be executed when the game finishes
         var gameFinishedCallbacks = [];
+        var gameFinished = false;
 
         // Setup the render loop
         (function mainLoop() {
@@ -1271,6 +1271,23 @@ var GameAssets = (function () {
                 } else {
                     // Draw game over screen
                     Renderer.showGameOver(gameCanvas, gameContext);
+                }
+
+                if (!gameFinished) {
+                    var score = game.data.score;
+                    var value = 0;
+
+                    for (var x = 0; x < game.grid.width; x++) {
+                        for (var y = 0; y < game.grid.height; y++) {
+                            if (!!game.grid.tiles[x][y] && game.grid.tiles[x][y].value > value) {
+                                value = game.grid.tiles[x][y].value;
+                            }
+                        }
+                    }
+
+                    var level = Math.log(value) / Math.log(2);
+                    window.location.href = "tradehero://games/1/recordScore/"+score.toString()+"/level/"+level.toString();
+                    gameFinished = true;
                 }
             } else {
                 // Handle the user input
