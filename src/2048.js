@@ -224,7 +224,7 @@ var GameAssets = (function () {
             // Needed to prevent undefined behavior on Android devices
             event.preventDefault();
 
-            event.changedTouches = event.changedTouches || [{pageX: 0, pageY: 0}];
+            //event.changedTouches = event.changedTouches || [{pageX: 0, pageY: 0}];
             var touch = event.changedTouches[0];
 
             startCoordinates.x = touch.pageX;
@@ -234,7 +234,7 @@ var GameAssets = (function () {
             // Needed to prevent undefined behavior on Android devices
             event.preventDefault();
 
-            event.changedTouches = event.changedTouches || [{pageX: 0, pageY: 0}];
+            //event.changedTouches = event.changedTouches || [{pageX: 0, pageY: 0}];
             var touch = event.changedTouches[0];
 
             // Get the horizontal and vertical differences
@@ -605,9 +605,12 @@ var GameAssets = (function () {
             drawCurrentScore: function (canvas, context, topScoreCoordinates, score) {
                 // TODO: Use font-metrics to determine size/positioning
                 var margin = 10;
-                var width = 180;
+                var width = canvas.width / 2;
                 var height = canvas.height - (margin * 2);
-                var x = topScoreCoordinates.x - (width + margin);
+
+                // this is position with top score box.
+                //var x = topScoreCoordinates.x - (width + margin);
+                var x = topScoreCoordinates.x;
                 var y = margin;
 
                 // Draw the score box
@@ -616,14 +619,14 @@ var GameAssets = (function () {
 
                 // Draw the "Score:" label
                 context.fillStyle = assets.score.titleColor;
-                context.font = "bold 24px Helvetica Neue";
+                context.font = "bold 6em Helvetica Neue";
                 context.textAlign = "center";
                 context.textBaseline = "top";
                 context.fillText("Score:", x + (width / 2), y + 5, width);
 
                 // Draw the current score
                 context.fillStyle = assets.score.valueColor;
-                context.font = "bold 36px Helvetica Neue";
+                context.font = "bold 6em Helvetica Neue";
                 context.textBaseline = "bottom";
                 context.fillText(score, x + (width / 2), y + height - 5, width);
 
@@ -635,27 +638,30 @@ var GameAssets = (function () {
             drawTopScore: function (canvas, context, score) {
                 // TODO: Use font-metrics to determine size/positioning
                 var margin = 10;
-                var width = 180;
+                var width = canvas.width / 2;
                 var height = canvas.height - (margin * 2);
                 var x = canvas.width - width;
                 var y = margin;
 
-                // Draw the top score box
-                context.fillStyle = assets.score.backgroundColor;
-                this.roundedRectangle(context, x, y, width, height, 4);
+                // the below was commented for removing top score
+                // uncomment to draw it bacl ;)
 
-                // Draw the "Top Score:" text
-                context.fillStyle = assets.score.titleColor;
-                context.font = "bold 24px Helvetica Neue";
-                context.textAlign = "center";
-                context.textBaseline = "top";
-                context.fillText("Top Score:", x + (width / 2), y + 5, width);
-
-                // Draw the score under the heading
-                context.fillStyle = assets.score.valueColor;
-                context.font = "bold 36px Helvetica Neue";
-                context.textBaseline = "bottom";
-                context.fillText(score, x + (width / 2), y + height - 5, width);
+                //// Draw the top score box
+                //context.fillStyle = assets.score.backgroundColor;
+                //this.roundedRectangle(context, x, y, width, height, 4);
+                //
+                //// Draw the "Top Score:" text
+                //context.fillStyle = assets.score.titleColor;
+                //context.font = "bold 6em Helvetica Neue";
+                //context.textAlign = "center";
+                //context.textBaseline = "top";
+                //context.fillText("Top Score:", x + (width / 2), y + 5, width);
+                //
+                //// Draw the score under the heading
+                //context.fillStyle = assets.score.valueColor;
+                //context.font = "bold 6em Helvetica Neue";
+                //context.textBaseline = "bottom";
+                //context.fillText(score, x + (width / 2), y + height - 5, width);
 
                 return {
                     x: x,
@@ -1193,12 +1199,13 @@ var GameAssets = (function () {
         // Setup DOM with canvases
         (function () {
             // Get the available size for a square canvas
-            var scoreCanvasHeight = 100 / Metrics.getPixelRatio();
+            var scoreCanvasHeight = 400 / Metrics.getPixelRatio();
+            var scoreCanvasWidth = scoreCanvasHeight * 4;
             var size = Metrics.getSize();
             size = ((Metrics.getHeight() - scoreCanvasHeight) <= Metrics.getWidth()) ? (Metrics.getHeight() - scoreCanvasHeight) : size;
 
             // Get the score canvas ready
-            scoreCanvas = Metrics.createCanvas(size, scoreCanvasHeight);
+            scoreCanvas = Metrics.createCanvas(scoreCanvasWidth, scoreCanvasHeight);
             scoreContext = scoreCanvas.getContext("2d");
 
             // Get the main canvas ready
@@ -1226,17 +1233,20 @@ var GameAssets = (function () {
             }
         };
 
+        var gameFinished = false;
+
         // Callback to reset the game data
         var resetCallback = function () {
             game.data.score = 0;
             game.data.allowResetCallback = true;
             game.data.insertTile = false;
             game.grid = Game.reset();
+            gameFinished = false;
         };
 
         // List of callbacks to be executed when the game finishes
         var gameFinishedCallbacks = [];
-        var gameFinished = false;
+
 
         // Setup the render loop
         (function mainLoop() {
